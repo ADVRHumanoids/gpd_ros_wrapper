@@ -1,0 +1,72 @@
+# This is an example filter config for tracked vehicle Absolem from Czech Technical University's
+# VRAS team. The robot is equipped with a Realsense D435.
+# The field of view of the sensor can only capture a few links, so the `only_links` parameter is set
+# to increase performance. Also, the `filter/keep_clouds_organized` parameter is important here to
+# retain the 2D structure of the RGBD camera output.
+cloud_filter_chain:
+  - name: CropAroundTable
+    type: point_cloud2_filters/CropBoxFilterPointCloud2
+    params:
+      keep_organized: True
+      pub_cloud: False
+      input_frame: "surface_top"
+      min_x: -0.4
+      max_x: 0.4
+      min_y: -0.6
+      max_y: 0.5
+      min_z: 0.02
+      max_z: 0.4
+  # - name: RemoveTable
+  #   type: point_cloud2_filters/SacSegmentationExtractFilterPointCloud2
+  #   params:
+  #     input_frame: "surface_top"
+  #     pub_cloud: True
+  #     axis_x: 0
+  #     axis_y: 0
+  #     axis_z: 1
+  #     eps_angle: 0.15
+  #     distance_threshold: 0.01
+  #     negative: True
+  #     optimize_coefficents: True
+  # - name: JustPublish
+  #   type: point_cloud2_filters/CropBoxFilterPointCloud2
+  #   params:
+  #     active: False
+  #     pub_cloud: True
+  - name: VoxelGridFilter
+    type: point_cloud2_filters/VoxelGridFilterPointCloud2
+    params:
+      input_frame: 'surface_top'
+      leaf_size_x: 0.01
+      leaf_size_y: 0.01
+      leaf_size_z: 0.01
+      min_points_per_voxel: 10
+      negative: False
+  - name: RemoveRobot
+    type: robot_body_filter/RobotBodyFilterPointCloud2
+    params:
+      frames/sensor: 'D435_camera_link'
+      frames/fixed: 'D435_camera_link'
+      frames/output: 'panda_link0'
+      filter/keep_clouds_organized: True
+      filter/do_clipping: True
+      filter/do_contains_test: True
+      filter/do_shadow_test: False
+      sensor/point_by_point: False
+      sensor/min_distance: 0.2
+      sensor/max_distance: 3.0
+      body_model/inflation/scale: 1.5
+      body_model/inflation/padding: 0.07
+      body_model/robot_description_param: '/robot_description'
+      transforms/buffer_length: 15.0
+      transforms/timeout/reachable: 0.2
+      transforms/timeout/unreachable: 0.2
+      bounding_sphere/compute: False
+      bounding_box/compute: False
+      oriented_bounding_box/compute: False
+      local_bounding_box/compute: False
+      debug/pcl/inside: False
+      debug/pcl/clip: False
+      debug/pcl/shadow: False
+      debug/marker/contains: False
+      debug/marker/shadow: False

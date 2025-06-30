@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<launch>
+
+  <arg name="roll" default="0" /> 
+  <arg name="pitch" default="0" /> 
+  <arg name="yaw" default="0" /> 
+  <arg name="x" value="$(eval 0.8/2 - 0.0625)" /> 
+  <arg name="y" value="$(eval -1.6/2 + 0.2623)" /> 
+  <arg name="z" default="0.01" /> 
+
+  <arg name="parent" default="surface_top" /> 
+  <arg name="arm_base" default="world" />
+
+  <node pkg="tf2_ros" type="static_transform_publisher" name="table_to_arm_base" args="$(arg x) $(arg y) $(arg z) $(arg yaw) $(arg pitch) $(arg roll) $(arg parent) $(arg arm_base)"
+    />
+
+</launch>

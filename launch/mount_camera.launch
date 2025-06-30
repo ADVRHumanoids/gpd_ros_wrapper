@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<launch>
+
+  <arg name="camera" default="D435_camera" /> 
+
+  <!-- Desk april24 -->
+  <arg name="x" default="-0.4384" /> 
+  <arg name="y" default="-0.7740" /> 
+  <arg name="z" default="0.4065" /> 
+  <arg name="quat_x" default="-0.1412" /> 
+  <arg name="quat_y" default="0.2760" /> 
+  <arg name="quat_z" default="0.3615" /> 
+  <arg name="quat_w" default="0.8796" /> 
+  
+  <arg name="parent" default="surface_top" /> 
+  <arg name="cam_base" default="$(arg camera)_mount" /> 
+  
+  <node pkg="tf2_ros" type="static_transform_publisher" name="table_to_cam_base" args="$(arg x) $(arg y) $(arg z) $(arg quat_x) $(arg quat_y) $(arg quat_z) $(arg quat_w) $(arg parent) $(arg cam_base)"
+    />
+
+</launch>

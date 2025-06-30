@@ -1,0 +1,7 @@
+
+---
+Header header
+geometry_msgs/Transform ref_T_object
+string child_frame_id # the frame id of the child frame
+
+geometry_msgs/Vector3 dimensions

@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<launch>
+    
+    <arg name='depth' default='true' />
+    <arg name="serial_no" default=""/>
+    <arg name="camera" default="D435_camera"/>
+    <arg name="rviz" default="false" doc="Just for when this launch is standalone and you want to see what the camera see"/>
+
+<!--        /D435_camera/rgb_camera/enable_auto_white_balance: False-->
+<!--        /D435_camera/stereo_module/exposure: 7500-->
+
+    <!-- <rosparam>
+        /D435_camera/rgb_camera/enable_auto_exposure: False
+        /D435_camera/rgb_camera/exposure: 100
+    </rosparam> -->
+
+    <include file="$(find realsense2_camera)/launch/rs_camera.launch">
+        <arg name="serial_no" value="$(arg serial_no)" />
+        <arg name="camera" value="$(arg camera)" />
+        <arg name="enable_depth" value="$(arg depth)" />
+        <arg name="enable_color" value="true" />
+        <arg name="enable_pointcloud" value="$(arg depth)" />
+        <arg name="ordered_pc" value="$(arg depth)" />
+        <arg name="align_depth" value="$(arg depth)" />
+    </include>
+
+    <node if="$(arg rviz)" pkg="rviz" type="rviz" name="rviz" output="screen" args="-d $(find haria_project)/config/d435.rviz"></node> 
+
+    
+</launch>

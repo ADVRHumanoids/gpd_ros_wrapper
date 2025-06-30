@@ -1,0 +1,201 @@
+<?xml version="1.0"?>
+<launch>
+    
+    <env name="ROSCONSOLE_FORMAT" value="[${severity}] [${time}] [${node}] [${function}] [${line}]: ${message}"/>
+    
+    <arg name="interactive_marker" default="false" />
+
+
+    <include file="$(find gazebo_ros)/launch/empty_world.launch">
+        <arg name="world_name" value="$(find frankapanda_gazebo)/worlds/frankapanda.world"/> 
+        <arg name="paused" value="false"/>
+        <arg name="use_sim_time" value="true"/>
+        <arg name="gui" value="true"/>
+        <arg name="recording" value="false"/>
+        <arg name="debug" value="false"/>
+        <arg name="verbose" value="true"/>
+        <arg name="physics" value="ode"/>
+<!--   to record log, btw deprecated name now it is recording      -->
+<!--        <arg name="headless" default="false"/> -->
+    </include>
+
+
+    <!-- ***************************** TABLE (working table holes, august 24)   ********************************************************************************* -->
+
+    <arg name="t_pose_x" value="0" />
+    <arg name="t_pose_y" value="0" />
+    <arg name="surface_high" value="0.865" />
+    <arg name="t_size_x" value="0.75" />
+    <arg name="t_size_y" value="1.2" />
+    <arg name="t_size_z" value="0.06" />
+
+    <!--   0.420 x 0.297 A3   -->
+    <arg name="key_size_x" value="$(eval 0.42/4)"/>
+    <arg name="key_size_y" value="$(eval 0.297/3)"/>
+    <arg name="keyboard_rows" value="4"/>
+    <arg name="keyboard_cols" value="3"/>
+    
+    <include file="$(find iit_gazebo_worlds_pkg)/table/launch/load_table.launch">
+        <arg name="table_name" value="table"/>
+        <arg name="table_urdf_name" value="table"/>
+        <arg name="pub_tf" value="true"/>
+        <arg name="pub_world_pose" value="false"/>
+        <arg name="t_pose_x" value="$(arg t_pose_x)" />
+        <arg name="t_pose_y" value="$(arg t_pose_y)" />
+        <arg name="surface_high" value="$(arg surface_high)"/>
+        <arg name="surface_size_x" value="$(arg t_size_x)"/>
+        <arg name="surface_size_y" value="$(arg t_size_y)"/>
+        <arg name="surface_size_z" value="$(arg t_size_z)"/>
+        <arg name="surface_gazebo_color" value="Gazebo/Gold"/>
+        <arg name="keyboard" value="false"/>
+        <arg name="key_size_x" value="$(arg key_size_x)"/>
+        <arg name="key_size_y" value="$(arg key_size_y)"/>
+        <arg name="key_size_z" value="0.0001"/>
+        <arg name="keyboard_rows" value="$(arg keyboard_rows)"/>
+        <arg name="keyboard_cols" value="$(arg keyboard_cols)"/>
+        <arg name="keyboard_x" value="$(eval ((t_size_x/2) - (key_size_x*keyboard_rows/2)))"/>
+        <arg name="keyboard_y" value="$(eval ((t_size_y/2) - (key_size_y*keyboard_cols/2)))"/>
+        <arg name="keyboard_z" value="0"/>
+    </include>
+    
+    <!-- ***************************** REALSENSE D435   ********************************************************************************************** -->
+    
+    <include file="$(find realsense_gazebo_description)/launch/load_d435i_standalone.launch">
+        <arg name="name" value="D435_camera" />
+        <arg name="parent" value="D435_camera_mount" />
+        <arg name="spawn_x" value="$(eval t_pose_x - 0.36731)" />
+        <arg name="spawn_y" value="$(eval t_pose_y - 0.732763)" />
+        <arg name="spawn_z" value="$(eval surface_high + 0.39648)" />
+        <arg name="spawn_roll" value="-0.0101501" />
+        <arg name="spawn_pitch" value="0.5798331" />
+        <arg name="spawn_yaw" value="1.1321645" />
+    <!-- <arg name="spawn_x" value="$(eval t_pose_x)" />
+        <arg name="spawn_y" value="$(eval t_pose_y )" />
+        <arg name="spawn_z" value="$(eval surface_high + 1)" />
+        <arg name="spawn_roll" value="0" />
+        <arg name="spawn_pitch" value="1.57" />
+        <arg name="spawn_yaw" value="0" /> -->
+        <arg name="enable_pointcloud" value="true" />
+        <arg name="align_depth" value="true" />
+        <arg name="pub_world_tf" value="false" />
+    </include>
+    
+    <!-- ***************************** ROBOT  ******************************************************************** -->
+
+    <include file="$(find franka_description)/launch/panda_with_base_gazebo.launch">
+        <arg name="controller" value="" /> <!-- we load them after -->
+        <arg name="interactive_marker" value="$(arg interactive_marker)" /> 
+        <arg name="x" value="$(eval 8.5*0.025)" /> 
+        <arg name="y" value="$(eval -17.5*0.025)" /> 
+        <arg name="z" value="$(eval surface_high)" /> 
+        <arg name="yaw" value="1.5708" /> 
+    </include>
+    <!-- load other controller -->
+    <node name="ros_control_stopped_spawner" pkg="controller_manager" type="spawner" respawn="false"
+    output="screen" args="--stopped position_effort_joint_controller velocity_joint_controller position_joint_trajectory_controller"/>
+
+
+    <!-- ***************************** OBJECTS   *************************************************** -->
+    
+    <include file="$(find iit_gazebo_worlds_pkg)/arucoBoxes/launch/loaders/load_box.launch">
+        <arg name="name" value="box1"/>
+        <arg name="pose_x" value="$(eval t_pose_x + 0.05)" />
+        <arg name="pose_y" value="$(eval t_pose_y + 0.1)" />
+        <arg name="pose_z" value="$(eval surface_high + 0.1/2 + 0.01)" />
+        <arg name="pub_box_data" value="false"/>    
+        <arg name="dim_x" value="0.05"/>
+        <arg name="dim_y" value="0.15"/>
+        <arg name="dim_z" value="0.2"/>
+        <arg name="mass" value="1"/>
+        <arg name="table_model_name" value="table"/>
+        <arg name="gazebo_color" value="Gazebo/ZincYellow"/>
+    </include>
+    
+    <include file="$(find iit_gazebo_worlds_pkg)/arucoBoxes/launch/loaders/load_box.launch">
+        <arg name="name" value="box2"/>
+        <arg name="pose_x" value="$(eval t_pose_x - 0.18)" />
+        <arg name="pose_y" value="$(eval t_pose_y - 0.25)" />
+        <arg name="pose_z" value="$(eval surface_high + 0.1/2 + 0.01)" />
+        <arg name="pub_box_data" value="false"/>    
+        <arg name="dim_x" value="0.05"/>
+        <arg name="dim_y" value="0.05"/>
+        <arg name="dim_z" value="0.2"/>
+        <arg name="mass" value="1"/>
+        <arg name="table_model_name" value="table"/>
+        <arg name="gazebo_color" value="Gazebo/Blue"/>
+    </include>
+    
+    <include file="$(find iit_gazebo_worlds_pkg)/arucoBoxes/launch/loaders/load_box.launch">
+        <arg name="name" value="box3"/>
+        <arg name="pose_x" value="$(eval t_pose_x - 0.2)" />
+        <arg name="pose_y" value="$(eval t_pose_y + 0.4)" />
+        <arg name="pose_z" value="$(eval surface_high + 0.1/2 + 0.01)" />
+        <arg name="pub_box_data" value="false"/>    
+        <arg name="dim_x" value="0.05"/>
+        <arg name="dim_y" value="0.15"/>
+        <arg name="dim_z" value="0.05"/>
+        <arg name="mass" value="1"/>
+        <arg name="table_model_name" value="table"/>
+        <arg name="gazebo_color" value="Gazebo/Trunk"/>
+    </include>
+    
+    <include file="$(find iit_gazebo_worlds_pkg)/arucoBoxes/launch/loaders/load_box.launch">
+        <arg name="name" value="box4"/>
+        <arg name="pose_x" value="$(eval t_pose_x + 0.1)" />
+        <arg name="pose_y" value="$(eval t_pose_y + 0.4)" />
+        <arg name="pose_z" value="$(eval surface_high + 0.1/2 + 0.01)" />
+        <arg name="pub_box_data" value="false"/>    
+        <arg name="dim_x" value="0.25"/>
+        <arg name="dim_y" value="0.05"/>
+        <arg name="dim_z" value="0.078"/>
+        <arg name="mass" value="1"/>
+        <arg name="table_model_name" value="table"/>
+        <arg name="gazebo_color" value="Gazebo/Orange"/>
+    </include>
+
+    <!-- <include file="$(find iit_gazebo_worlds_pkg)/3DGems/object.launch">
+        <arg name="name" value="bottle_beer"/> 
+        <arg name="category" value="kitchen" /> 
+        <arg name="pose_x" value="$(eval t_pose_x + 0.05)" />
+        <arg name="pose_y" value="$(eval t_pose_y + 0.1)" />
+        <arg name="pose_z" value="$(eval surface_high + 0.02)" />
+    </include>
+
+    <include file="$(find iit_gazebo_worlds_pkg)/3DGems/object.launch">
+        <arg name="name" value="cup_blue"/> 
+        <arg name="category" value="kitchen" /> 
+        <arg name="pose_x" value="$(eval t_pose_x - 0.18)" />
+        <arg name="pose_y" value="$(eval t_pose_y - 0.25)" />
+        <arg name="pose_z" value="$(eval surface_high + 0.02)" />
+    </include>
+
+    <include file="$(find iit_gazebo_worlds_pkg)/3DGems/object.launch">
+        <arg name="name" value="donut_3"/> 
+        <arg name="category" value="food" /> 
+        <arg name="pose_x" value="$(eval t_pose_x - 0.2)" />
+        <arg name="pose_y" value="$(eval t_pose_y + 0.4)" />
+        <arg name="pose_z" value="$(eval surface_high + 0.02)" />
+    </include>
+
+    <include file="$(find iit_gazebo_worlds_pkg)/3DGems/object.launch">
+        <arg name="name" value="cup_paper"/> 
+        <arg name="category" value="kitchen" /> 
+        <arg name="pose_x" value="$(eval t_pose_x + 0.22)" />
+        <arg name="pose_y" value="$(eval t_pose_y - 0.10)" />
+        <arg name="pose_z" value="$(eval surface_high + 0.02)" />
+    </include> -->
+
+    
+        <!-- unique node for pub all obj_world_poses, so we put pub_xxx_data to false above -->
+    <node name="poses_gazebo_to_tf" pkg="iit_gazebo_worlds_pkg" type="pose_gazebo_to_tf.py" output="screen" 
+          args="--reference world 
+            --models table D435_camera box1 box2 box3 box4
+            --models_link surface D435_camera_mount box1 box2 box3 box4
+            --ignore_roslaunch_added_param" />
+
+
+    <!-- *************************** RVIZ OPTION ********************************************************************************************* -->
+    <node pkg="rviz" type="rviz" name="rviz" output="screen" args="-d $(find gpd_ros_wrapper)/config/franka_haria_gazebo.rviz">
+    </node> 
+    
+</launch>

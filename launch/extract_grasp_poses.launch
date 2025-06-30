@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<launch>
+
+    <arg name="gdb" default="false" />
+    <arg if="$(arg gdb)" name="launch-prefix" value="xterm -e gdb --args"/>
+    <arg unless="$(arg gdb)" name="launch-prefix" value=""/>
+    <arg name="camera" value="D435_camera"/>
+            
+<!--    <arg name="camera_frame" default="D435_head_camera_color_optical_frame"/>-->
+    <arg name="input_cloud_topic" value="/$(arg camera)/depth/color/points/filtered"/>
+
+    <!--  To be used when inputing a tf for selecting the cluster. (
+    see extracGraspPoses.run() instead of run_no_tf_input)-->
+    <arg name="selecting_frame" default=""/>
+    <arg name="still_selecting_frame_threshold" default="0.05"/>
+    <arg name="tf_listener" default="false"/> <!-- Put to true when using selecting frame-->
+
+    <arg name="max_clusters" default="5"/>
+    <arg name="extend_grasps" default="true" doc="Double the retrieved grasp poses rotating them by 180 on the z axis. Useful for simmetric grippers"/>
+    <arg name="publishSingleObjCloud" default="true"/>
+    <arg name="publishSingleObjTF" default="true"/>
+    <arg name="publishSingleObjBoundingBox" default="true"/>
+    <arg name="publishGraspsTf" default="true"/>
+
+    <arg name="gpdConfig" default="$(find gpd_ros_wrapper)/config/gpd_conf_panda.yaml" />
+
+    <node pkg="gpd_ros_wrapper" name="extract_grasp_poses"
+        type="extract_grasp_poses_executable" output="screen" respawn="false" launch-prefix="$(arg launch-prefix)">
+        
+        <param name="input_cloud_topic" value="$(arg input_cloud_topic)"/>
+        <param name="max_clusters" value="$(arg max_clusters)"/>
+        <param name="publishSingleObjCloud" value="$(arg publishSingleObjCloud)"/>
+        <param name="publishSingleObjTF" value="$(arg publishSingleObjTF)"/>
+        <param name="publishSingleObjBoundingBox" value="$(arg publishSingleObjBoundingBox)"/>
+        <param name="publishGraspsTf" value="$(arg publishGraspsTf)"/>
+        <param name="gpdConfig" value="$(arg gpdConfig)"/>
+
+        <param name="selecting_frame" value="$(arg selecting_frame)"/>
+        <param name="still_selecting_frame_threshold" value="$(arg still_selecting_frame_threshold)"/>
+        <param name="tf_listener" value="$(arg tf_listener)"/> 
+
+    </node>
+    
+</launch>

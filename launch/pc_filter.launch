@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<launch>
+    
+    <arg name="camera" default="D435_camera"/>
+    <arg name="input_pc_topic" default="/$(arg camera)/depth/color/points"/>
+    <arg name="output_pc_topic" default="/$(arg camera)/depth/color/points/filtered"/>
+      
+    <arg name="gdb" default="false" />
+    <arg if="$(arg gdb)" name="launch-prefix" value="xterm -e gdb --args"/>
+    <arg unless="$(arg gdb)" name="launch-prefix" value=""/>
+      
+    <node name="filter" pkg="sensor_filters" type="pointcloud2_filter_chain" output="screen" launch-prefix="$(arg launch-prefix)">
+        <rosparam command="load" file="$(find gpd_ros_wrapper)/config/pc_filters.yaml" />
+        <remap from="~input" to="/$(arg input_pc_topic)" />
+        <remap from="~output" to="/$(arg output_pc_topic)" />
+    </node>
+
+
+</launch>
