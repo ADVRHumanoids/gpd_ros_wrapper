@@ -48,7 +48,12 @@ ExtractGraspPoses is:
 - Run camera, e.g. `roslaunch gpd_ros_wrapper d435.launch`
 - Run pc filters, e.g. `roslaunch gpd_ros_wrapper pc_filter.launch`
 - Run the actual extractor, `roslaunch gpd_ros_wrapper extract_grasp_poses.launch publishGraspsTf:=true`  
-  With the publishGraspsTf argument, grasp poses are published as tf with child names *grasp_detected_0*, *grasp_detected_1*, *grasp_detected_2* ... (they are in order of GPD score)
+
+### Input/output
+- Grasp poses are published in the `/extract_grasp_poses/grasp_poses` topic as a vector of `geometry_msgs/Pose` (they are in order of GPD score)
+- They can also be retrieved as tf (with the publishGraspsTf argument set), with child names *grasp_detected_0*, *grasp_detected_1*, *grasp_detected_2* ... (they are in order of GPD score)
+- Service `/extract_grasp_poses/select_object` is used to select which object to consider (begins with -1 so no grasp pose is given)
+- Service `/extract_grasp_poses/filter_grasp_directions` is used to filter the grasp directions and position, it begins with directions on the sides of the object (i.e. excluding top grasps).
 
 ### Simulation Complete Example
 *Default franka package is necessary for models: `sudo apt install ros-noetic-franka-ros ros-noetic-franka-gazebo`
