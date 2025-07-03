@@ -1,0 +1,12 @@
+# Request
+bool filter_direction
+geometry_msgs/Vector3[] directions
+float64 thresh_rad
+
+bool filter_position
+geometry_msgs/Vector3 position_upper
+geometry_msgs/Vector3 position_lower
+---
+# Response
+bool success
+string message

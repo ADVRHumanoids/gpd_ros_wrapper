@@ -1,0 +1,5 @@
+int8 object_id
+---
+bool success
+int8 object_selected
+string message

@@ -68,9 +68,15 @@ ExtractGraspPoses::ExtractGraspPoses (ros::NodeHandle* nh) {
     if (publishSingleObjBoundingBox_) {
         marker_pub = nh->advertise<visualization_msgs::MarkerArray>("objects_bounding", 1);
     }
+
+    grasp_poses_pub = nh->advertise<gpd_ros_wrapper::PosesStamped>("grasp_poses", 1);
+    grasp_poses_msg.header.frame_id = cloud_ref_frame; //grasps are wrt cloud frame
     
-    selected_object_srv = nh->advertiseService("object_selected", &ExtractGraspPoses::selectedObjectClbk, this);
-    
+    get_selected_object_srv = nh->advertiseService("get_object_selected", &ExtractGraspPoses::getSelectedObjectClbk, this);
+    select_object_srv = nh->advertiseService("select_object", &ExtractGraspPoses::selectObjectClbk, this);
+    filter_grasp_direction_srv = nh->advertiseService("filter_grasp_directions", &ExtractGraspPoses::filterGraspDirectionClbk, this);
+
+
     //for some debug
     //tmp_pub = nh->advertise<sensor_msgs::Image>("/image_trial",1);
 
@@ -99,6 +105,25 @@ ExtractGraspPoses::ExtractGraspPoses (ros::NodeHandle* nh) {
         config_file_->getValueOfKeyAsStdVectorDouble("camera_position",
                                                     "0.0 0.0 0.0");
     camera_view_point << camera_position[0], camera_position[1], camera_position[2];
+
+    selected_cluster = -1;
+
+    _filter_direction = true;
+    //grasp object from side
+    _grasping_directions.resize(5);
+    //dir are referred to point cloud frame, that at the moment is robot base
+    _grasping_directions.at(0) = {1,0,0};
+    _grasping_directions.at(1) = {-0.707107,-0.707107,0};
+    _grasping_directions.at(2) = {0,1,0};
+    _grasping_directions.at(3) = {-0.707107,0.707107,0};
+    _grasping_directions.at(4) = {-1,0,0};
+    //no on y neg since gripper will be between user and obj
+
+    _thresh_direction_rad = 0.3;
+
+    _filter_position = false;
+    _grasping_position_upper = {0,0,0} ;
+    _grasping_position_lower = {0,0,0} ;
  
 }
 
@@ -124,7 +149,8 @@ int ExtractGraspPoses::run () {
 
     //if selecting_frame moved, always check, if not, check only if grasps are empty 
     if (selecting_frame_moved || grasps.size() == 0)  { 
-        graspDetection();
+        graspDetection(_filter_direction, _grasping_directions, _thresh_direction_rad, 
+                   _filter_position, _grasping_position_upper, _grasping_position_lower);
         finalizeGrasps(0,0,0, extend_grasps);
     }
 
@@ -145,9 +171,10 @@ int ExtractGraspPoses::run_no_tf_input() {
     momentOfInertia();
     
     //select cluster "manually" instead of finding point from tf
-    //TODO: redo if selecting another cluster?
-    if (selectCluster()) {
-        if (!graspDetection()) {
+    //TODO: redo only if selecting another cluster?
+    if (selected_cluster >= 0) {
+        if (!graspDetection(_filter_direction, _grasping_directions, _thresh_direction_rad, 
+                   _filter_position, _grasping_position_upper, _grasping_position_lower)) {
             ROS_ERROR_STREAM("Grasp detection failed");
         } 
         if (grasps.size() == 0) {
@@ -156,6 +183,8 @@ int ExtractGraspPoses::run_no_tf_input() {
         if (!finalizeGrasps(0,0,0, extend_grasps)) {
             ROS_ERROR_STREAM("Finalizing grasps failed");
         }
+
+        publishGraspPoses();
     }
 
     publishStuff();
@@ -265,19 +294,6 @@ const ObjectCluster* ExtractGraspPoses::getSelectedObjectCluster() const {
     return &(object_clusters.at(selected_cluster));
 }
 
-bool ExtractGraspPoses::selectCluster() {
-
-    selected_cluster = -1;
-    if (object_clusters.size() > 0) {
-        selected_cluster = 0; //TODO
-        object_clusters.at(selected_cluster).selectCluster();
-    } else {
-        ROS_WARN("No clusters found, cannot select one");
-        return false;
-    }
-    return true;
-}
-
 bool ExtractGraspPoses::findPoints(double x, double y, double z) {
 
     selected_cluster = -1;
@@ -327,7 +343,7 @@ bool ExtractGraspPoses::graspDetection(
     return true;
 }
 
-bool ExtractGraspPoses::graspDetection(
+bool ExtractGraspPoses::graspDetection2(
     bool filter_direction, const std::array<double,3>& thresh_magnitude_normalized_upper, const std::array<double,3>& thresh_magnitude_normalized_lower,
     bool filter_position, const std::array<double,3>& position_upper, const std::array<double,3>& position_lower) {
 
@@ -430,7 +446,7 @@ void ExtractGraspPoses::cloudClbk(const PointCloud::ConstPtr& msg)
     *cloud = *msg;
 }
 
-bool ExtractGraspPoses::selectedObjectClbk(gpd_ros_wrapper::ObjectClusterSrv::Request &req, 
+bool ExtractGraspPoses::getSelectedObjectClbk(gpd_ros_wrapper::ObjectClusterSrv::Request &req, 
                                                 gpd_ros_wrapper::ObjectClusterSrv::Response &res) {
     
     //req is empty
@@ -465,13 +481,79 @@ bool ExtractGraspPoses::selectedObjectClbk(gpd_ros_wrapper::ObjectClusterSrv::Re
     return true;
 }
 
+bool ExtractGraspPoses::selectObjectClbk(gpd_ros_wrapper::SelectObjectSrv::Request &req, 
+                                                gpd_ros_wrapper::SelectObjectSrv::Response &res) {
+
+    if (req.object_id > n_clusters-1) {
+        ROS_WARN_STREAM("Object id " << req.object_id << " not found, max is " << n_clusters-1);
+        res.success = false;
+        res.object_selected = -1;
+        res.message = "Object id " +  std::to_string(req.object_id) + " not found, max is " + std::to_string(n_clusters-1);
+
+    } else if (req.object_id == -1) {
+        ROS_WARN_STREAM("Deactivating grasp pose detection");
+        res.success = true;
+        res.object_selected = -1;
+        res.message = "Deactivating grasp pose detection";
+
+    } else {
+
+        selected_cluster = req.object_id;
+        object_clusters.at(selected_cluster).selectCluster();
+        ROS_INFO_STREAM("Selected object cluster " << selected_cluster);
+        res.success = true;
+        res.object_selected = selected_cluster;
+        res.message = "Selected object cluster " + std::to_string(selected_cluster);
+    }
+    
+    return true;
+}
+
+bool ExtractGraspPoses::filterGraspDirectionClbk(gpd_ros_wrapper::FilterGraspDirectionSrv::Request &req, 
+                                                gpd_ros_wrapper::FilterGraspDirectionSrv::Response &res) {
+
+    _filter_direction = req.filter_direction;
+
+    res.message = "";
+
+    if (_filter_direction && req.directions.size() == 0) {
+        res.success = true;
+        res.message += "Filter direction is true but no directions provided. Keeping the old grasping dirs ";
+        
+    } else {
+        _grasping_directions.clear();
+        _grasping_directions.resize(req.directions.size());
+        for (size_t i = 0; i < req.directions.size(); i++) {
+            _grasping_directions.at(i).at(0) = req.directions.at(i).x;
+            _grasping_directions.at(i).at(1) = req.directions.at(i).y;
+            _grasping_directions.at(i).at(2) = req.directions.at(i).z;
+        }
+    }
+    _thresh_direction_rad = req.thresh_rad;
+
+    _filter_position = req.filter_position;
+    _grasping_position_upper.at(0) = req.position_upper.x;
+    _grasping_position_upper.at(1) = req.position_upper.y;
+    _grasping_position_upper.at(2) = req.position_upper.z;
+    _grasping_position_lower.at(0) = req.position_lower.x;
+    _grasping_position_lower.at(1) = req.position_lower.y;
+    _grasping_position_lower.at(2) = req.position_lower.z;
+
+    res.success = true;
+    res.message += "Grasp direction filter updated";
+    
+    return true;
+}
+
 bool ExtractGraspPoses::publishStuff() {
 
     bool ret = true;
     ret = ret && publishClusters(publishSingleObjCloud_, publishSingleObjTF_, publishSingleObjBoundingBox_);
-    if (publishGraspsTf_) {
-        ret = ret && publishGrasps();
+    if (publishGraspsTf_ && selected_cluster >= 0) {
+        ret = ret && publishGraspsTf();
     }
+
+    
     
     return ret;
 }
@@ -510,7 +592,21 @@ bool ExtractGraspPoses::publishClusters(bool publishSingleObjCloud, bool publish
     return true;
 }
 
-bool ExtractGraspPoses::publishGrasps(unsigned int publishGraspsTfMaxTf) {
+void ExtractGraspPoses::publishGraspPoses() {
+
+    grasp_poses_msg.header.stamp = ros::Time::now();
+
+    if (extend_grasps) {
+        grasp_poses_msg.poses = grasps_poses_extended;
+    } else {
+        grasp_poses_msg.poses = grasps_poses;
+    }
+
+    grasp_poses_pub.publish(grasp_poses_msg);
+
+}
+
+bool ExtractGraspPoses::publishGraspsTf(unsigned int publishGraspsTfMaxTf) {
 
     if (grasps.size() == 0) {
         ROS_WARN_STREAM ("Publishing grasps error: no grasps to pub");

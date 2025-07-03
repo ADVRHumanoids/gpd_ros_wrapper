@@ -33,7 +33,6 @@
     output="screen" args="--stopped position_effort_joint_controller velocity_joint_controller position_joint_trajectory_controller"/>
 
 
-
     <!-- ***************************** TABLE  ********************************************************************************* -->
 
     <include file="$(find iit_gazebo_worlds_pkg)/table/launch/load_table.launch">

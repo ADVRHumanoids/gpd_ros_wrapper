@@ -28,7 +28,10 @@
 #include <ros/topic.h>
 
 #include <gpd_ros_wrapper/ObjectCluster.h>
+#include <gpd_ros_wrapper/PosesStamped.h>
 #include <gpd_ros_wrapper/ObjectClusterSrv.h>
+#include <gpd_ros_wrapper/SelectObjectSrv.h>
+#include <gpd_ros_wrapper/FilterGraspDirectionSrv.h>
 
 #include <visualization_msgs/Marker.h>
 #include <visualization_msgs/MarkerArray.h>
@@ -64,19 +67,18 @@ public:
     bool momentOfInertia(const std::string &mode = "aabb");
     const std::vector<ObjectCluster>* getObjectClusters() const;
     const ObjectCluster* getSelectedObjectCluster() const;
-    bool selectCluster();
     bool findPoints(double x, double y, double z);
     bool graspDetection(
-        bool filter_direction = false, const std::vector<std::array<double,3>>& directions = {}, const double& thresh_rad = 0.2,
-        bool filter_position = false, const std::array<double,3>& position_upper = {0,0,0}, const std::array<double,3>& position_lower = {0,0,0});
+        bool filter_direction, const std::vector<std::array<double,3>>& directions, const double& thresh_rad,
+        bool filter_position, const std::array<double,3>& position_upper, const std::array<double,3>& position_lower);
 
-    bool graspDetection(
+    bool graspDetection2(
         bool filter_direction, const std::array<double,3>& thresh_magnitude_normalized_upper, const std::array<double,3>& thresh_magnitude_normalized_lower,
         bool filter_position, const std::array<double,3>& position_upper, const std::array<double,3>& position_lower);
     bool finalizeGrasps(const double& offset_x = 0, const double& offset_y=0, const double& offset_z=0, bool extended=false);
     bool publishStuff();
     bool publishClusters(bool publishSingleObjCloud, bool publishSingleObjBoundingBox, bool publishSingleObjTF);
-    bool publishGrasps(unsigned int publishGraspsTfMaxTf = 5);
+    bool publishGraspsTf(unsigned int publishGraspsTfMaxTf = 5);
 
     geometry_msgs::TransformStamped getRefCloudTSelectingFrame() const;
     std::vector<geometry_msgs::Pose> getGraspsPoses() const;
@@ -100,7 +102,6 @@ private:
     double selecting_frame_moved = false;
     bool getTransforms();
 
-
     ros::Subscriber cloud_sub;
     void cloudClbk(const PointCloud::ConstPtr& msg);
     ros::Publisher cloud_plane_pub, cloud_objects_pub;
@@ -111,10 +112,20 @@ private:
     visualization_msgs::MarkerArray markerArrayMsg;
     tf2_ros::TransformBroadcaster tf_broadcaster;
     std::vector<geometry_msgs::TransformStamped> transforms;
-    
-    ros::ServiceServer selected_object_srv;
-    bool selectedObjectClbk(gpd_ros_wrapper::ObjectClusterSrv::Request &req, gpd_ros_wrapper::ObjectClusterSrv::Response &res);
 
+    ros::Publisher grasp_poses_pub;
+    gpd_ros_wrapper::PosesStamped grasp_poses_msg;
+    void publishGraspPoses();
+    
+    ros::ServiceServer get_selected_object_srv;
+    bool getSelectedObjectClbk(gpd_ros_wrapper::ObjectClusterSrv::Request &req, gpd_ros_wrapper::ObjectClusterSrv::Response &res);
+
+    ros::ServiceServer select_object_srv;
+    bool selectObjectClbk(gpd_ros_wrapper::SelectObjectSrv::Request &req, gpd_ros_wrapper::SelectObjectSrv::Response &res);
+
+    ros::ServiceServer filter_grasp_direction_srv;
+    bool filterGraspDirectionClbk(gpd_ros_wrapper::FilterGraspDirectionSrv::Request &req, gpd_ros_wrapper::FilterGraspDirectionSrv::Response &res);
+    
     //phases methods
     std::vector<ObjectCluster> object_clusters;
     unsigned int n_clusters = 0;
@@ -129,6 +140,12 @@ private:
     //ros::Publisher tmp_pub;
     
     int selected_cluster = -1;
+    bool _filter_direction;
+    std::vector<std::array<double,3>> _grasping_directions;
+    double _thresh_direction_rad;
+    bool _filter_position;
+    std::array<double,3> _grasping_position_upper;
+    std::array<double,3> _grasping_position_lower;
 
     //Grasp with gpd
     std::string gpdConfig;
