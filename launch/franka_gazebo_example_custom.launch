@@ -5,37 +5,30 @@
     
     <arg name="interactive_marker" default="false" />
 
+
+    <include file="$(find gazebo_ros)/launch/empty_world.launch">
+        <arg name="world_name" value="$(find frankapanda_gazebo)/worlds/frankapanda.world"/> 
+        <arg name="paused" value="false"/>
+        <arg name="use_sim_time" value="true"/>
+        <arg name="gui" value="true"/>
+        <arg name="recording" value="false"/>
+        <arg name="debug" value="false"/>
+        <arg name="verbose" value="true"/>
+        <arg name="physics" value="ode"/>
+<!--   to record log, btw deprecated name now it is recording      -->
+<!--        <arg name="headless" default="false"/> -->
+    </include>
+
+
+    <!-- ***************************** TABLE (working table holes, august 24)   ********************************************************************************* -->
+
     <arg name="t_pose_x" value="0" />
     <arg name="t_pose_y" value="0" />
     <arg name="surface_high" value="0.865" />
     <arg name="t_size_x" value="0.75" />
     <arg name="t_size_y" value="1.2" />
     <arg name="t_size_z" value="0.06" />
-
-    <!-- ***************************** ROBOT (with gazebo gui) ******************************************************************** -->
-
-    <include file="$(find franka_gazebo)/launch/panda.launch">
-        <arg name="gazebo" value="true" />
-        <arg name="headless" value="false" />
-        <arg name="paused" value="false" />
-        <arg name="rviz" value="false" />
-
-        <arg name="use_gripper" value="true" />
-        <arg name="controller" value="" /> <!-- we load them after -->
-        <arg name="interactive_marker" value="$(arg interactive_marker)" /> 
-        <arg name="x" value="$(eval 8.5*0.025)" /> 
-        <arg name="y" value="$(eval -17.5*0.025)" /> 
-        <arg name="z" value="$(eval surface_high)" /> 
-        <arg name="yaw" value="1.5708" /> 
-    </include>
-    <!-- load other controller -->
-    <node name="ros_control_stopped_spawner" pkg="controller_manager" type="spawner" respawn="false"
-    output="screen" args="--stopped position_effort_joint_controller velocity_joint_controller position_joint_trajectory_controller"/>
-
-
-
-    <!-- ***************************** TABLE  ********************************************************************************* -->
-
+    
     <include file="$(find iit_gazebo_worlds_pkg)/table/launch/load_table.launch">
         <arg name="table_name" value="table"/>
         <arg name="table_urdf_name" value="table"/>
@@ -72,6 +65,21 @@
         <arg name="align_depth" value="true" />
         <arg name="pub_world_tf" value="false" />
     </include>
+    
+    <!-- ***************************** ROBOT  ******************************************************************** -->
+
+    <include file="$(find franka_description)/launch/panda_with_base_gazebo.launch">
+        <arg name="controller" value="" /> <!-- we load them after -->
+        <arg name="interactive_marker" value="$(arg interactive_marker)" /> 
+        <arg name="x" value="$(eval 8.5*0.025)" /> 
+        <arg name="y" value="$(eval -17.5*0.025)" /> 
+        <arg name="z" value="$(eval surface_high)" /> 
+        <arg name="yaw" value="1.5708" /> 
+    </include>
+    <!-- load other controller -->
+    <node name="ros_control_stopped_spawner" pkg="controller_manager" type="spawner" respawn="false"
+    output="screen" args="--stopped position_effort_joint_controller velocity_joint_controller position_joint_trajectory_controller"/>
+
 
     <!-- ***************************** OBJECTS   *************************************************** -->
     

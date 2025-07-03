@@ -15,7 +15,7 @@ ExtractGraspPoses is:
 ## Prerequisite
 - ROS noetic and the packages shown in the `package.xml`/`CMakeLists.txt`
 - `sudo apt install realsense2_camera realsense_gazebo_description`
-- GPD fork at https://github.com/ADVRHumanoids/gpd. Build it with `make` and install it with `make install`
+- GPD fork at https://github.com/ADVRHumanoids/gpd. Build it with `make` and install it with `make install`. Take care where you install it, the path is needed for **find_library(GPD_LIB ...** and **find_path(GPD_INCLUDE_DIR...** in this package's `CMakeLists.txt` 
 - Point cloud filters, from `sudo apt install ros-noetic-point-cloud2-filters` or source at https://github.com/ADVRHumanoids/point_cloud2_filters. If not using this, you must filter the point cloud by yourself (e.g. removing surfaces like tables) before feeding it to this pipeline to allow the cluster extractor to work properly
 - Filter the robot body is also suggested, `sudo apt install ros-noetic-robot-body-filter`
 
@@ -51,6 +51,7 @@ ExtractGraspPoses is:
   With the publishGraspsTf argument, grasp poses are published as tf with child names *grasp_detected_0*, *grasp_detected_1*, *grasp_detected_2* ... (they are in order of GPD score)
 
 ### Simulation Complete Example
+*Default franka package is necessary for models: `sudo apt install ros-noetic-franka-ros ros-noetic-franka-gazebo`
 Terminals:
 1. `roslaunch gpd_ros_wrapper franka_gazebo_example.launch`
 2. `roslaunch gpd_ros_wrapper pc_filter.launch`

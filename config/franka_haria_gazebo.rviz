@@ -7,7 +7,6 @@ Panels:
         - /Global Options1
         - /Status1
         - /Panda1
-        - /Panda1/Links1
         - /TF1/Frames1
         - /MotionPlanning1
         - /MotionPlanning1/Scene Geometry1
@@ -37,7 +36,7 @@ Panels:
   - Class: rviz/Time
     Name: Time
     SyncMode: 0
-    SyncSource: PointCloud2
+    SyncSource: ""
   - Class: tf_visual_tools/TFVisualTools
     Name: TFVisualTools
 Preferences:
@@ -75,16 +74,20 @@ Visualization Manager:
         Expand Link Details: false
         Expand Tree: false
         Link Tree Style: Links in Alphabetic Order
-        dagana_1_bottom_link:
+        panda_hand:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        dagana_1_tcp:
+        panda_hand_sc:
           Alpha: 1
           Show Axes: false
           Show Trail: false
-        dagana_1_top_link:
+        panda_hand_tcp:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        panda_leftfinger:
           Alpha: 1
           Show Axes: false
           Show Trail: false
@@ -165,21 +168,17 @@ Visualization Manager:
           Alpha: 1
           Show Axes: false
           Show Trail: false
-        panda_round_base_link:
+        panda_rightfinger:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
-        tcp:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
         world:
           Alpha: 1
           Show Axes: false
           Show Trail: false
       Name: Panda
-      Robot Description: xbotcore/robot_description
+      Robot Description: robot_description
       TF Prefix: ""
       Update Interval: 0
       Value: true
@@ -204,36 +203,12 @@ Visualization Manager:
           Show Axes: false
           Show Trail: false
           Value: true
-        close_gripper_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
         front_left_leg:
           Alpha: 1
           Show Axes: false
           Show Trail: false
           Value: true
         front_right_leg:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        keyboard_base_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-        none_0_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        none_9_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        open_gripper_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
@@ -251,46 +226,6 @@ Visualization Manager:
           Alpha: 1
           Show Axes: false
           Show Trail: false
-        x_neg_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        x_pos_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        y_neg_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        y_pos_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        yaw_neg_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        yaw_pos_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        z_neg_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        z_pos_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
       Name: Table
       Robot Description: gazebo/table_description
       TF Prefix: ""
@@ -307,6 +242,11 @@ Visualization Manager:
         Expand Link Details: false
         Expand Tree: false
         Link Tree Style: Links in Alphabetic Order
+        box1:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
       Name: Box1
       Robot Description: gazebo/box1_description
       TF Prefix: ""
@@ -323,6 +263,11 @@ Visualization Manager:
         Expand Link Details: false
         Expand Tree: false
         Link Tree Style: Links in Alphabetic Order
+        box2:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
       Name: Box2
       Robot Description: gazebo/box2_description
       TF Prefix: ""
@@ -447,44 +392,32 @@ Visualization Manager:
           Value: false
         back_right_leg:
           Value: false
-        bottle_beer_link:
+        box1:
           Value: true
-        box_cloud_0:
+        box2:
           Value: true
-        box_cloud_1:
+        box3:
           Value: true
-        box_cloud_2:
-          Value: true
-        close_gripper_link:
-          Value: false
-        cup_blue_link:
-          Value: true
-        cup_paper_link:
-          Value: true
-        dagana_1_bottom_link:
-          Value: true
-        dagana_1_tcp:
-          Value: true
-        dagana_1_top_link:
-          Value: true
-        donut_3_link:
+        box4:
           Value: true
         front_left_leg:
           Value: false
         front_right_leg:
           Value: false
-        grasp_detected_0:
+        panda_EE:
           Value: true
-        keyboard_base_link:
-          Value: false
-        laser:
+        panda_K:
           Value: true
-        none_0_link:
-          Value: false
-        none_9_link:
-          Value: false
-        open_gripper_link:
-          Value: false
+        panda_NE:
+          Value: true
+        panda_hand:
+          Value: true
+        panda_hand_sc:
+          Value: true
+        panda_hand_tcp:
+          Value: true
+        panda_leftfinger:
+          Value: true
         panda_link0:
           Value: true
         panda_link0_sc:
@@ -519,7 +452,7 @@ Visualization Manager:
           Value: false
         panda_link8:
           Value: false
-        panda_round_base_link:
+        panda_rightfinger:
           Value: true
         surface:
           Value: false
@@ -527,26 +460,8 @@ Visualization Manager:
           Value: true
         table_base_footprint:
           Value: false
-        tcp:
-          Value: true
         world:
           Value: true
-        x_neg_link:
-          Value: false
-        x_pos_link:
-          Value: false
-        y_neg_link:
-          Value: false
-        y_pos_link:
-          Value: false
-        yaw_neg_link:
-          Value: false
-        yaw_pos_link:
-          Value: false
-        z_neg_link:
-          Value: false
-        z_pos_link:
-          Value: false
       Marker Alpha: 1
       Marker Scale: 0.5
       Name: TF
@@ -576,50 +491,55 @@ Visualization Manager:
                 D435_camera_gyro_frame:
                   D435_camera_gyro_optical_frame:
                     {}
-          bottle_beer_link:
+          box1:
             {}
-          cup_blue_link:
+          box2:
             {}
-          cup_paper_link:
+          box3:
             {}
-          donut_3_link:
+          box4:
             {}
-          panda_round_base_link:
-            panda_link0:
-              panda_link0_sc:
+          panda_link0:
+            panda_link0_sc:
+              {}
+            panda_link1:
+              panda_link1_sc:
                 {}
-              panda_link1:
-                panda_link1_sc:
+              panda_link2:
+                panda_link2_sc:
                   {}
-                panda_link2:
-                  panda_link2_sc:
+                panda_link3:
+                  panda_link3_sc:
                     {}
-                  panda_link3:
-                    panda_link3_sc:
+                  panda_link4:
+                    panda_link4_sc:
                       {}
-                    panda_link4:
-                      panda_link4_sc:
+                    panda_link5:
+                      panda_link5_sc:
                         {}
-                      panda_link5:
-                        panda_link5_sc:
+                      panda_link6:
+                        panda_link6_sc:
                           {}
-                        panda_link6:
-                          panda_link6_sc:
+                        panda_link7:
+                          panda_link7_sc:
                             {}
-                          panda_link7:
-                            panda_link7_sc:
-                              {}
-                            panda_link8:
-                              dagana_1_top_link:
-                                dagana_1_bottom_link:
+                          panda_link8:
+                            panda_NE:
+                              panda_EE:
+                                panda_K:
                                   {}
-                                dagana_1_tcp:
-                                  tcp:
-                                    {}
+                            panda_hand:
+                              panda_hand_sc:
+                                {}
+                              panda_hand_tcp:
+                                {}
+                              panda_leftfinger:
+                                {}
+                              panda_rightfinger:
+                                {}
           surface:
             back_left_leg:
-              laser:
-                {}
+              {}
             back_right_leg:
               {}
             front_left_leg:
@@ -627,39 +547,7 @@ Visualization Manager:
             front_right_leg:
               {}
             surface_top:
-              box_cloud_0:
-                {}
-              box_cloud_1:
-                {}
-              box_cloud_2:
-                {}
-              grasp_detected_0:
-                {}
-              keyboard_base_link:
-                close_gripper_link:
-                  {}
-                none_0_link:
-                  {}
-                none_9_link:
-                  {}
-                open_gripper_link:
-                  {}
-                x_neg_link:
-                  {}
-                x_pos_link:
-                  {}
-                y_neg_link:
-                  {}
-                y_pos_link:
-                  {}
-                yaw_neg_link:
-                  {}
-                yaw_pos_link:
-                  {}
-                z_neg_link:
-                  {}
-                z_pos_link:
-                  {}
+              {}
             table_base_footprint:
               {}
       Update Interval: 0
@@ -724,109 +612,6 @@ Visualization Manager:
           Expand Link Details: false
           Expand Tree: false
           Link Tree Style: Links in Alphabetic Order
-          dagana_1_bottom_link:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          dagana_1_tcp:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-          dagana_1_top_link:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          panda_link0:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          panda_link0_sc:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-          panda_link1:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          panda_link1_sc:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-          panda_link2:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          panda_link2_sc:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-          panda_link3:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          panda_link3_sc:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-          panda_link4:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          panda_link4_sc:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-          panda_link5:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          panda_link5_sc:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-          panda_link6:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          panda_link6_sc:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-          panda_link7:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          panda_link7_sc:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-          panda_link8:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-          panda_round_base_link:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          tcp:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-          world:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
         Loop Animation: false
         Robot Alpha: 0.5
         Robot Color: 150; 50; 150
@@ -873,109 +658,6 @@ Visualization Manager:
           Expand Link Details: false
           Expand Tree: false
           Link Tree Style: Links in Alphabetic Order
-          dagana_1_bottom_link:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          dagana_1_tcp:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-          dagana_1_top_link:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          panda_link0:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          panda_link0_sc:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-          panda_link1:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          panda_link1_sc:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-          panda_link2:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          panda_link2_sc:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-          panda_link3:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          panda_link3_sc:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-          panda_link4:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          panda_link4_sc:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-          panda_link5:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          panda_link5_sc:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-          panda_link6:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          panda_link6_sc:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-          panda_link7:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          panda_link7_sc:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-          panda_link8:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-          panda_round_base_link:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          tcp:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-          world:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
         Robot Alpha: 0.5
         Show Robot Collision: false
         Show Robot Visual: false
@@ -995,7 +677,7 @@ Visualization Manager:
       Marker Topic: /keyboard_markers
       Name: MarkerArray
       Namespaces:
-        keyboard: true
+        {}
       Queue Size: 100
       Value: true
     - Class: rviz/MarkerArray
@@ -1050,9 +732,9 @@ Visualization Manager:
       Invert Z Axis: false
       Name: Current View
       Near Clip Distance: 0.009999999776482582
-      Pitch: 0.6303985118865967
+      Pitch: 0.3953987658023834
       Target Frame: <Fixed Frame>
-      Yaw: 1.4944467544555664
+      Yaw: 0.2394469976425171
     Saved: ~
 Window Geometry:
   Displays:
@@ -1064,7 +746,7 @@ Window Geometry:
     collapsed: false
   MotionPlanning - Trajectory Slider:
     collapsed: false
-  QMainWindow State: 000000ff00000000fd00000004000000000000032b000003edfc020000000bfb0000001200530065006c0065006300740069006f006e00000001e10000009b0000005c00fffffffb0000001e0054006f006f006c002000500072006f007000650072007400690065007302000001ed000001df00000185000000a3fb000000120056006900650077007300200054006f006f02000001df000002110000018500000122fb000000200054006f006f006c002000500072006f0070006500720074006900650073003203000002880000011d000002210000017afb000000100044006900730070006c006100790073010000003d0000018c000000c900fffffffb0000002000730065006c0065006300740069006f006e00200062007500660066006500720200000138000000aa0000023a00000294fb00000014005700690064006500530074006500720065006f02000000e6000000d2000003ee0000030bfb0000000c004b0069006e0065006300740200000186000001060000030c00000261fb000000280020002d0020005400720061006a006500630074006f0072007900200053006c00690064006500720000000000ffffffff0000000000000000fc000001cf0000025b000001a50100001cfa000000010100000002fb0000001c004d006f00740069006f006e0050006c0061006e006e0069006e00670100000000ffffffff000001f300fffffffb0000001a0054004600560069007300750061006c0054006f006f006c00730100000000000001f30000014900fffffffb00000044004d006f00740069006f006e0050006c0061006e006e0069006e00670020002d0020005400720061006a006500630074006f0072007900200053006c00690064006500720000000000ffffffff0000001600000016000000010000010f000002c1fc0200000003fb0000001e0054006f006f006c002000500072006f00700065007200740069006500730100000041000000780000000000000000fb0000000a00560069006500770073000000003d000002c1000000a400fffffffb0000001200530065006c0065006300740069006f006e010000025a000000b200000000000000000000000200000490000000a9fc0100000001fb0000000a00560069006500770073030000004e00000080000002e10000019700000003000007800000003efc0100000002fb0000000800540069006d0065010000000000000780000003bc00fffffffb0000000800540069006d006501000000000000045000000000000000000000044f000003ed00000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
+  QMainWindow State: 000000ff00000000fd00000004000000000000032b000003edfc020000000bfb0000001200530065006c0065006300740069006f006e00000001e10000009b0000005c00fffffffb0000001e0054006f006f006c002000500072006f007000650072007400690065007302000001ed000001df00000185000000a3fb000000120056006900650077007300200054006f006f02000001df000002110000018500000122fb000000200054006f006f006c002000500072006f0070006500720074006900650073003203000002880000011d000002210000017afb000000100044006900730070006c006100790073010000003d0000018c000000c900fffffffb0000002000730065006c0065006300740069006f006e00200062007500660066006500720200000138000000aa0000023a00000294fb00000014005700690064006500530074006500720065006f02000000e6000000d2000003ee0000030bfb0000000c004b0069006e0065006300740200000186000001060000030c00000261fb000000280020002d0020005400720061006a006500630074006f0072007900200053006c00690064006500720000000000ffffffff0000000000000000fc000001cf0000025b0000019a0100001cfa000000010100000002fb0000001c004d006f00740069006f006e0050006c0061006e006e0069006e00670100000000ffffffff000001f300fffffffb0000001a0054004600560069007300750061006c0054006f006f006c00730100000000000001f30000014900fffffffb00000044004d006f00740069006f006e0050006c0061006e006e0069006e00670020002d0020005400720061006a006500630074006f0072007900200053006c00690064006500720000000000ffffffff0000001600000016000000010000010f000002c1fc0200000003fb0000001e0054006f006f006c002000500072006f00700065007200740069006500730100000041000000780000000000000000fb0000000a00560069006500770073000000003d000002c1000000a400fffffffb0000001200530065006c0065006300740069006f006e010000025a000000b200000000000000000000000200000490000000a9fc0100000001fb0000000a00560069006500770073030000004e00000080000002e10000019700000003000007800000003efc0100000002fb0000000800540069006d0065010000000000000780000003bc00fffffffb0000000800540069006d006501000000000000045000000000000000000000044f000003ed00000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
   Selection:
     collapsed: false
   TFVisualTools:
