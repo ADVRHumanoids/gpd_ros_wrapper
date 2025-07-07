@@ -33,7 +33,7 @@ ExtractGraspPoses is:
 - If images are bad, params can be given with `<rosparam>` tags as in `d435.launch` file
 - Table to camera TF must be provided in someway. Convenience launch for static tranform pub from the table to the camera `mount_camera.launch`
 - To find the table to camera pose argument for e.g. the `mount_camera.launch`, one option is `table_cam_calib.launch` file:  
-  1. It uses aruco detection: `sudo apt install ros-noetic-aruco-detect`
+  1. It uses aruco detection: `sudo apt install ros-noetic-aruco-detect`. A good marker size for our purposes to print is 6.5cm.
   2. Prepare table printing an aruco and put it *as much as possible* precisely at the center of the table
   3. Mount camera watching the aruco
   4. `roslaunch gpd_ros_wrapper table_cam_calib.launch`. Check the file for important arguments, like table size, aruco size, aruco dictionary. This uses https://github.com/ADVRHumanoids/iit-gazebo-worlds-pkg.git for the table model.
