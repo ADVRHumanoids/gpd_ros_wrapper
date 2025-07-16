@@ -14,7 +14,8 @@ ExtractGraspPoses is:
 
 ## Prerequisite
 - ROS noetic and the packages shown in the `package.xml`/`CMakeLists.txt`
-- `sudo apt install ros-noetic-realsense2-camera ros-noetic-realsense2-description`
+- `sudo apt install ros-noetic-realsense2-camera`
+- The ROS packages https://github.com/ADVRHumanoids/realsense_gazebo_plugin and https://github.com/ADVRHumanoids/realsense_gazebo_description, to be put in the workspace and to compile (catkin)
 - GPD fork at https://github.com/ADVRHumanoids/gpd. Build it with `make` and install it with `make install`. Take care where you install it, the path is needed for **find_library(GPD_LIB ...** and **find_path(GPD_INCLUDE_DIR...** in this package's `CMakeLists.txt` 
 - Point cloud filters, from `sudo apt install ros-noetic-point-cloud2-filters` or source at https://github.com/ADVRHumanoids/point_cloud2_filters. If not using this, you must filter the point cloud by yourself (e.g. removing surfaces like tables) before feeding it to this pipeline to allow the cluster extractor to work properly
 - Filter the robot body is also suggested, `sudo apt install ros-noetic-robot-body-filter`
